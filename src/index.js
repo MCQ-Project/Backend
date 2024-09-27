@@ -17,10 +17,10 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // Define routes
-app.use('/auth', authRoutes);
+app.use('/auth', authRoutes); //tested
 app.use('/admin', quizRoutes);
 app.use('/quiz', quizRoutes); // Display and add quiz
-app.use('/user', userRoutes);
+app.use('/user', userRoutes);  //tested
 app.use('/userResult', userRoutes);
 
 app.listen(PORT, async () => {
