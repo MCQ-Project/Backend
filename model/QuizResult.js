@@ -5,27 +5,27 @@ const quizResultSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    engineeringField: {
+    category: {
         type: String,
         required: true,
-        enum: ['Computer', 'Civil', 'Architecture']
+        enum: ['Engineering', 'License', 'EngineeringEntrance'] // Added License and EngineeringEntrance
     },
-    review: {
-        type: String,
-        required: true
-    },
-    rating: {
-        type: Number,
-        required: true,
-        min: 1,
-        max: 5
-    },
-    totalQuestions: {
+    attemptedQuestions: {
         type: Number,
         required: true
     },
-    solvedQuestions: {
+    correctAnswers: {
         type: Number,
+        required: true
+    },
+    percentage: {
+        type: Number,
+        required: true,
+        min: 0,
+        max: 100
+    },
+    feedback: {
+        type: String,
         required: true
     }
 }, {

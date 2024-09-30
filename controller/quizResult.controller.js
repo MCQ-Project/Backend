@@ -3,22 +3,25 @@ import QuizResult from '../model/QuizResult.js';
 // Create a new quiz result
 export const createQuizResult = async (req, res) => {
     try {
-        const { userName, engineeringField, review, rating, totalQuestions, solvedQuestions } = req.body;
+        const { userName, category, attemptedQuestions, correctAnswers, feedback } = req.body;
 
+        // Calculate percentage
+        const percentage = ((correctAnswers / attemptedQuestions) * 100).toFixed(2); // Calculate percentage
+        
+        // Create new quiz result
         const newQuizResult = new QuizResult({
             userName,
-            engineeringField,
-            review,
-            rating,
-            totalQuestions,
-            solvedQuestions
+            category,
+            attemptedQuestions,
+            correctAnswers,
+            percentage: Number(percentage), // Convert percentage to Number
+            feedback
         });
 
         const savedQuizResult = await newQuizResult.save();
-
         res.status(201).json(savedQuizResult);
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(400).json({ error: error.message }); // Respond with 400 for validation errors
     }
 };
 

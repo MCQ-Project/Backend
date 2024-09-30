@@ -18,11 +18,12 @@ const generateToken = (user) => {
 // Signup - anyone can register
 export const signup = async (req, res) => {
     try {
-        const { fullname, email, password, registrationNumber, userImage } = req.body;
+        const { fullname, email, password, userImage } = req.body;
 
-        const existingUser = await User.findOne({ $or: [{ email }, { registrationNumber }] });
+        // Check if the email already exists
+        const existingUser = await User.findOne({ email });
         if (existingUser) {
-            return res.status(400).json({ message: "User already exists with this email or registration number" });
+            return res.status(400).json({ message: "User already exists with this email" });
         }
 
         const hashPassword = await bcryptjs.hash(password, 10);
@@ -31,7 +32,6 @@ export const signup = async (req, res) => {
             fullname,
             email,
             password: hashPassword,
-            registrationNumber,
             userImage: userImage || '',
         });
 
@@ -46,7 +46,6 @@ export const signup = async (req, res) => {
                 _id: createdUser._id,
                 fullname: createdUser.fullname,
                 email: createdUser.email,
-                registrationNumber: createdUser.registrationNumber,
                 isAdmin: createdUser.isAdmin,
                 userImage: createdUser.userImage,
             },
@@ -82,7 +81,6 @@ export const login = async (req, res) => {
                 _id: user._id,
                 fullname: user.fullname,
                 email: user.email,
-                registrationNumber: user.registrationNumber,
                 isAdmin: user.isAdmin,
                 userImage: user.userImage,
             },
@@ -124,7 +122,6 @@ export const getUserDetails = async (req, res) => {
                 _id: user._id,
                 fullname: user.fullname,
                 email: user.email,
-                registrationNumber: user.registrationNumber,
                 isAdmin: user.isAdmin,
                 userImage: user.userImage,
             },
@@ -139,7 +136,7 @@ export const getUserDetails = async (req, res) => {
 export const updateUser = async (req, res) => {
     try {
         const userId = req.params.id;
-        const { fullname, email, password, registrationNumber, isAdmin, userImage } = req.body;
+        const { fullname, email, password, isAdmin, userImage } = req.body;
 
         // Check if the user is admin or updating their own profile
         if (req.user._id !== userId && !req.user.isAdmin) {
@@ -155,7 +152,6 @@ export const updateUser = async (req, res) => {
         // Update fields if provided
         if (fullname) user.fullname = fullname;
         if (email) user.email = email;
-        if (registrationNumber) user.registrationNumber = registrationNumber;
         if (password) user.password = await bcryptjs.hash(password, 10);
         if (userImage) user.userImage = userImage;
         if (typeof isAdmin !== 'undefined' && req.user.isAdmin) user.isAdmin = isAdmin;
@@ -168,7 +164,6 @@ export const updateUser = async (req, res) => {
                 _id: user._id,
                 fullname: user.fullname,
                 email: user.email,
-                registrationNumber: user.registrationNumber,
                 isAdmin: user.isAdmin,
                 userImage: user.userImage,
             },
